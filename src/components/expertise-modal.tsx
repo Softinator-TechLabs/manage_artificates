@@ -55,7 +55,7 @@ export default function ExpertiseModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+    <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
       <Card className="w-full max-w-md bg-white">
         <CardHeader>
           <CardTitle className="text-gray-900">Select Your Expertise</CardTitle>
@@ -68,13 +68,13 @@ export default function ExpertiseModal({
             <Label htmlFor="expertise" className="text-gray-700">
               What's your area of expertise?
             </Label>
-            <Select value={selectedExpertise} onValueChange={setSelectedExpertise}>
-              <SelectTrigger className="w-full">
+            <Select value={selectedExpertise} onValueChange={setSelectedExpertise} >
+              <SelectTrigger className="w-full cursor-pointer bg-white border-gray-300 hover:bg-gray-50 text-black">
                 <SelectValue placeholder="Select your expertise" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="bg-white text-black max-h-52 overflow-y-auto">
                 {EXPERTISE_OPTIONS.map((expertise) => (
-                  <SelectItem key={expertise} value={expertise}>
+                  <SelectItem key={expertise} value={expertise} className="text-black hover:bg-blue-500 hover:text-white cursor-pointer">
                     {expertise}
                   </SelectItem>
                 ))}
@@ -86,14 +86,14 @@ export default function ExpertiseModal({
             <Button
               onClick={handleSubmit}
               disabled={!selectedExpertise}
-              className="flex-1 bg-blue-600 hover:bg-blue-700 text-white"
+              className="flex-1 bg-blue-600 hover:bg-blue-700 text-white cursor-pointer"
             >
               Save Expertise
             </Button>
             <Button
               onClick={onClose}
               variant="outline"
-              className="flex-1 border-gray-300 text-gray-700 hover:bg-gray-50"
+              className="flex-1 border-gray-300 text-white hover:bg-gray-50 hover:text-black cursor-pointer"
             >
               Cancel
             </Button>
