@@ -44,7 +44,7 @@ export async function POST(req: NextRequest) {
     console.log('Found submission:', submission._id);
 
     // Update submission with final results
-    const updateData: any = {
+    const updateData: Record<string, unknown> = {
       status: status || 'PROCESSING',
       reviewerNotes: notes,
     };

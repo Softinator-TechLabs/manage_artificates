@@ -2,10 +2,8 @@
 
 import { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { z } from 'zod';
 import { submissionSchema } from '@/lib/validation';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import {
   Card,
@@ -71,7 +69,7 @@ export default function SubmissionForm() {
 
       setEnglishQuestion(translatedQuestion);
       setEnglishAnswer(translatedAnswer);
-    } catch (error) {
+    } catch {
       setError('Translation failed. Please try again.');
     } finally {
       setIsTranslating(false);
@@ -146,7 +144,7 @@ export default function SubmissionForm() {
       setError(null);
       queryClient.invalidateQueries({ queryKey: ['submissions'] });
     },
-    onError: (e: any) => setError(e.message),
+    onError: (e: Error) => setError(e.message),
   });
 
   return (
@@ -162,7 +160,7 @@ export default function SubmissionForm() {
       <CardContent className="space-y-4">
         <ImageUpload
           onImageUploaded={setImageData}
-          currentImageUrl={imageData}
+          currentImageData={imageData}
         />
 
         <div className="space-y-2">

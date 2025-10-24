@@ -1,63 +1,80 @@
-"use client";
+'use client';
 
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
-import { z } from "zod";
-import { redemptionSchema } from "@/lib/validation";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { Badge } from "@/components/ui/badge";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useState } from 'react';
+import { redemptionSchema } from '@/lib/validation';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { Label } from '@/components/ui/label';
+import { Badge } from '@/components/ui/badge';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
 
 export default function WalletDisplay() {
   const queryClient = useQueryClient();
-  const [redemptionPoints, setRedemptionPoints] = useState("");
-  const [redemptionMethod, setRedemptionMethod] = useState<"BANK" | "UPI">("BANK");
+  const [redemptionPoints, setRedemptionPoints] = useState('');
+  const [redemptionMethod, setRedemptionMethod] = useState<'BANK' | 'UPI'>(
+    'BANK',
+  );
 
   const { data: wallet, isLoading: walletLoading } = useQuery({
-    queryKey: ["wallet"],
+    queryKey: ['wallet'],
     queryFn: async () => {
-      const res = await fetch("/api/wallet/me");
-      if (!res.ok) throw new Error("Failed to fetch wallet");
+      const res = await fetch('/api/wallet/me');
+      if (!res.ok) throw new Error('Failed to fetch wallet');
       return res.json();
     },
   });
 
   const { data: redemptions, isLoading: redemptionsLoading } = useQuery({
-    queryKey: ["redemptions"],
+    queryKey: ['redemptions'],
     queryFn: async () => {
-      const res = await fetch("/api/redemptions");
-      if (!res.ok) throw new Error("Failed to fetch redemptions");
+      const res = await fetch('/api/redemptions');
+      if (!res.ok) throw new Error('Failed to fetch redemptions');
       return res.json();
     },
   });
 
   const { mutate: createRedemption, isPending } = useMutation({
-    mutationFn: async (data: { method: "BANK" | "UPI"; points: number }) => {
+    mutationFn: async (data: { method: 'BANK' | 'UPI'; points: number }) => {
       const parsed = redemptionSchema.safeParse(data);
       if (!parsed.success) {
-        throw new Error("Invalid input: " + parsed.error.issues.map(e => e.message).join(", "));
+        throw new Error(
+          'Invalid input: ' +
+            parsed.error.issues.map((e) => e.message).join(', '),
+        );
       }
 
-      const res = await fetch("/api/redemptions", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+      const res = await fetch('/api/redemptions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
       });
 
       if (!res.ok) {
         const errorData = await res.json();
-        throw new Error(errorData.error || "Failed to create redemption");
+        throw new Error(errorData.error || 'Failed to create redemption');
       }
 
       return res.json();
     },
     onSuccess: () => {
-      setRedemptionPoints("");
-      queryClient.invalidateQueries({ queryKey: ["wallet"] });
-      queryClient.invalidateQueries({ queryKey: ["redemptions"] });
+      setRedemptionPoints('');
+      queryClient.invalidateQueries({ queryKey: ['wallet'] });
+      queryClient.invalidateQueries({ queryKey: ['redemptions'] });
     },
   });
 
@@ -70,16 +87,16 @@ export default function WalletDisplay() {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "PENDING":
-        return "bg-yellow-100 text-yellow-800";
-      case "APPROVED":
-        return "bg-green-100 text-green-800";
-      case "REJECTED":
-        return "bg-red-100 text-red-800";
-      case "PAID":
-        return "bg-blue-100 text-blue-800";
+      case 'PENDING':
+        return 'bg-yellow-100 text-yellow-800';
+      case 'APPROVED':
+        return 'bg-green-100 text-green-800';
+      case 'REJECTED':
+        return 'bg-red-100 text-red-800';
+      case 'PAID':
+        return 'bg-blue-100 text-blue-800';
       default:
-        return "bg-gray-100 text-gray-800";
+        return 'bg-gray-100 text-gray-800';
     }
   };
 
@@ -135,8 +152,10 @@ export default function WalletDisplay() {
                 <input
                   type="radio"
                   value="BANK"
-                  checked={redemptionMethod === "BANK"}
-                  onChange={(e) => setRedemptionMethod(e.target.value as "BANK")}
+                  checked={redemptionMethod === 'BANK'}
+                  onChange={(e) =>
+                    setRedemptionMethod(e.target.value as 'BANK')
+                  }
                 />
                 <span>Bank Transfer</span>
               </label>
@@ -144,20 +163,25 @@ export default function WalletDisplay() {
                 <input
                   type="radio"
                   value="UPI"
-                  checked={redemptionMethod === "UPI"}
-                  onChange={(e) => setRedemptionMethod(e.target.value as "UPI")}
+                  checked={redemptionMethod === 'UPI'}
+                  onChange={(e) => setRedemptionMethod(e.target.value as 'UPI')}
                 />
                 <span>UPI</span>
               </label>
             </div>
           </div>
 
-          <Button 
-            onClick={handleRedemption} 
-            disabled={isPending || !redemptionPoints || parseInt(redemptionPoints) <= 0 || (wallet && parseInt(redemptionPoints) > wallet.balance)}
+          <Button
+            onClick={handleRedemption}
+            disabled={
+              isPending ||
+              !redemptionPoints ||
+              parseInt(redemptionPoints) <= 0 ||
+              (wallet && parseInt(redemptionPoints) > wallet.balance)
+            }
             className="w-full"
           >
-            {isPending ? "Processing..." : "Redeem Points"}
+            {isPending ? 'Processing...' : 'Redeem Points'}
           </Button>
         </CardContent>
       </Card>
@@ -186,22 +210,30 @@ export default function WalletDisplay() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {redemptions.map((redemption: any) => (
-                    <TableRow key={redemption._id}>
-                      <TableCell className="font-medium">
-                        {redemption.points}
-                      </TableCell>
-                      <TableCell>{redemption.method}</TableCell>
-                      <TableCell>
-                        <Badge className={getStatusColor(redemption.status)}>
-                          {redemption.status}
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="text-sm text-gray-500">
-                        {new Date(redemption.createdAt).toLocaleDateString()}
-                      </TableCell>
-                    </TableRow>
-                  ))}
+                  {redemptions.map(
+                    (redemption: {
+                      _id: string;
+                      points: number;
+                      method: string;
+                      status: string;
+                      createdAt: string;
+                    }) => (
+                      <TableRow key={redemption._id}>
+                        <TableCell className="font-medium">
+                          {redemption.points}
+                        </TableCell>
+                        <TableCell>{redemption.method}</TableCell>
+                        <TableCell>
+                          <Badge className={getStatusColor(redemption.status)}>
+                            {redemption.status}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="text-sm text-gray-500">
+                          {new Date(redemption.createdAt).toLocaleDateString()}
+                        </TableCell>
+                      </TableRow>
+                    ),
+                  )}
                 </TableBody>
               </Table>
             </div>

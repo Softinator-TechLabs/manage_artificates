@@ -11,7 +11,7 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
-    async signIn({ user, account, profile }) {
+    async signIn({ user }) {
       try {
         await connectDB();
 
@@ -33,14 +33,14 @@ export const authOptions: NextAuthOptions = {
         return false;
       }
     },
-    async session({ session, token }) {
+    async session({ session }) {
       try {
         await connectDB();
 
         if (session.user?.email) {
           const user = await User.findOne({ email: session.user.email });
           if (user) {
-            (session.user as any).id = user._id.toString();
+            (session.user as { id: string }).id = user._id.toString();
           }
         }
 
@@ -50,7 +50,7 @@ export const authOptions: NextAuthOptions = {
         return session;
       }
     },
-    async jwt({ token, user, account }) {
+    async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
       }

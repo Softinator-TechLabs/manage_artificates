@@ -1,26 +1,25 @@
-"use client";
+'use client';
 
-import { useSession, signOut } from "next-auth/react";
-import { useQuery } from "@tanstack/react-query";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import SubmissionForm from "@/components/submission-form";
-import SubmissionsTable from "@/components/submissions-table";
-import Link from "next/link";
+import { useSession, signOut } from 'next-auth/react';
+import { useQuery } from '@tanstack/react-query';
+import { Button } from '@/components/ui/button';
+import SubmissionForm from '@/components/submission-form';
+import SubmissionsTable from '@/components/submissions-table';
+import Link from 'next/link';
 
 export default function Dashboard() {
-  const { data: session, status } = useSession();
+  const { status } = useSession();
 
   const { data: wallet } = useQuery({
-    queryKey: ["wallet"],
+    queryKey: ['wallet'],
     queryFn: async () => {
-      const res = await fetch("/api/wallet/me");
-      if (!res.ok) throw new Error("Failed to fetch wallet");
+      const res = await fetch('/api/wallet/me');
+      if (!res.ok) throw new Error('Failed to fetch wallet');
       return res.json();
     },
   });
 
-  if (status === "loading") {
+  if (status === 'loading') {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">Loading...</div>
@@ -28,7 +27,7 @@ export default function Dashboard() {
     );
   }
 
-  if (status === "unauthenticated") {
+  if (status === 'unauthenticated') {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
@@ -51,7 +50,10 @@ export default function Dashboard() {
             </div>
             <div className="flex items-center space-x-4">
               <div className="text-sm text-gray-600">
-                Balance: <span className="font-semibold text-green-600">{wallet?.balance || 0} points</span>
+                Balance:{' '}
+                <span className="font-semibold text-green-600">
+                  {wallet?.balance || 0} points
+                </span>
               </div>
               <div className="flex space-x-2">
                 <Button variant="outline" asChild>

@@ -105,47 +105,58 @@ export default function SubmissionsTable() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {submissions.map((submission: any) => (
-                  <TableRow key={submission._id}>
-                    <TableCell>
-                      <Badge className={getStatusColor(submission.status)}>
-                        {submission.status}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="max-w-[150px]">
-                      <div className="truncate" title={submission.question}>
-                        {submission.question}
-                      </div>
-                    </TableCell>
-                    <TableCell className="max-w-[150px]">
-                      <div
-                        className="truncate"
-                        title={submission.englishQuestion || 'Not translated'}
-                      >
-                        {submission.englishQuestion || 'Not translated'}
-                      </div>
-                    </TableCell>
-                    <TableCell className="max-w-[150px]">
-                      <div className="truncate" title={submission.answer}>
-                        {submission.answer}
-                      </div>
-                    </TableCell>
-                    <TableCell className="max-w-[150px]">
-                      <div
-                        className="truncate"
-                        title={submission.englishAnswer || 'Not translated'}
-                      >
-                        {submission.englishAnswer || 'Not translated'}
-                      </div>
-                    </TableCell>
-                    <TableCell className="font-medium">
-                      {submission.pointsAwarded || 0}
-                    </TableCell>
-                    <TableCell className="text-sm text-gray-500">
-                      {new Date(submission.createdAt).toLocaleDateString()}
-                    </TableCell>
-                  </TableRow>
-                ))}
+                {submissions.map(
+                  (submission: {
+                    _id: string;
+                    question: string;
+                    answer: string;
+                    englishQuestion?: string;
+                    englishAnswer?: string;
+                    status: string;
+                    pointsAwarded?: number;
+                    createdAt: string;
+                  }) => (
+                    <TableRow key={submission._id}>
+                      <TableCell>
+                        <Badge className={getStatusColor(submission.status)}>
+                          {submission.status}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="max-w-[150px]">
+                        <div className="truncate" title={submission.question}>
+                          {submission.question}
+                        </div>
+                      </TableCell>
+                      <TableCell className="max-w-[150px]">
+                        <div
+                          className="truncate"
+                          title={submission.englishQuestion || 'Not translated'}
+                        >
+                          {submission.englishQuestion || 'Not translated'}
+                        </div>
+                      </TableCell>
+                      <TableCell className="max-w-[150px]">
+                        <div className="truncate" title={submission.answer}>
+                          {submission.answer}
+                        </div>
+                      </TableCell>
+                      <TableCell className="max-w-[150px]">
+                        <div
+                          className="truncate"
+                          title={submission.englishAnswer || 'Not translated'}
+                        >
+                          {submission.englishAnswer || 'Not translated'}
+                        </div>
+                      </TableCell>
+                      <TableCell className="font-medium">
+                        {submission.pointsAwarded || 0}
+                      </TableCell>
+                      <TableCell className="text-sm text-gray-500">
+                        {new Date(submission.createdAt).toLocaleDateString()}
+                      </TableCell>
+                    </TableRow>
+                  ),
+                )}
               </TableBody>
             </Table>
           </div>

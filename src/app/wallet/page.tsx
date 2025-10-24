@@ -1,14 +1,14 @@
-"use client";
+'use client';
 
-import { useSession } from "next-auth/react";
-import { Button } from "@/components/ui/button";
-import WalletDisplay from "@/components/wallet-display";
-import Link from "next/link";
+import { useSession } from 'next-auth/react';
+import { Button } from '@/components/ui/button';
+import WalletDisplay from '@/components/wallet-display';
+import Link from 'next/link';
 
 export default function WalletPage() {
-  const { data: session, status } = useSession();
+  const { status } = useSession();
 
-  if (status === "loading") {
+  if (status === 'loading') {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">Loading...</div>
@@ -16,7 +16,7 @@ export default function WalletPage() {
     );
   }
 
-  if (status === "unauthenticated") {
+  if (status === 'unauthenticated') {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">

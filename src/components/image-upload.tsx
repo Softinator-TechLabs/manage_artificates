@@ -1,26 +1,33 @@
 'use client';
 
-import { useState, useRef } from 'react';
-import { Button } from '@/components/ui/button';
+import { useState, useRef, useEffect } from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent } from '@/components/ui/card';
 
 interface ImageUploadProps {
   onImageUploaded: (imageData: string) => void; // Now expects base64 data
-  currentImageUrl?: string;
+  currentImageData?: string; // Changed from currentImageUrl to currentImageData
 }
 
 export default function ImageUpload({
   onImageUploaded,
-  currentImageUrl,
+  currentImageData,
 }: ImageUploadProps) {
   const [isUploading, setIsUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(
-    currentImageUrl || null,
+    currentImageData || null,
   );
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Clear preview when currentImageData is cleared
+  useEffect(() => {
+    if (!currentImageData) {
+      setPreviewUrl(null);
+      setUploadError(null);
+    }
+  }, [currentImageData]);
 
   const handleFileSelect = async (
     event: React.ChangeEvent<HTMLInputElement>,
@@ -99,7 +106,23 @@ export default function ImageUpload({
                 alt="Preview"
                 className="max-h-48 mx-auto rounded-lg object-cover"
               />
-              <p className="text-sm text-gray-600">Click to change image</p>
+              <div className="space-y-2">
+                <p className="text-sm text-gray-600">Click to change image</p>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setPreviewUrl(null);
+                    onImageUploaded('');
+                    if (fileInputRef.current) {
+                      fileInputRef.current.value = '';
+                    }
+                  }}
+                  className="text-sm text-red-600 hover:text-red-800 underline"
+                >
+                  Remove image
+                </button>
+              </div>
             </div>
           ) : (
             <div className="space-y-4">

@@ -1,10 +1,22 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { Label } from '@/components/ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 interface ExpertiseModalProps {
   isOpen: boolean;
@@ -14,36 +26,38 @@ interface ExpertiseModalProps {
 }
 
 const EXPERTISE_OPTIONS = [
-  "Technology",
-  "Healthcare",
-  "Finance",
-  "Education",
-  "Art & Design",
-  "Science",
-  "Business",
-  "Engineering",
-  "Marketing",
-  "Law",
-  "Sports",
-  "Food & Cooking",
-  "Travel",
-  "Fashion",
-  "Music",
-  "Photography",
-  "Writing",
-  "Psychology",
-  "Architecture",
-  "Agriculture",
-  "Other"
+  'Technology',
+  'Healthcare',
+  'Finance',
+  'Education',
+  'Art & Design',
+  'Science',
+  'Business',
+  'Engineering',
+  'Marketing',
+  'Law',
+  'Sports',
+  'Food & Cooking',
+  'Travel',
+  'Fashion',
+  'Music',
+  'Photography',
+  'Writing',
+  'Psychology',
+  'Architecture',
+  'Agriculture',
+  'Other',
 ];
 
-export default function ExpertiseModal({ 
-  isOpen, 
-  onClose, 
-  onExpertiseSelected, 
-  currentExpertise 
+export default function ExpertiseModal({
+  isOpen,
+  onClose,
+  onExpertiseSelected,
+  currentExpertise,
 }: ExpertiseModalProps) {
-  const [selectedExpertise, setSelectedExpertise] = useState(currentExpertise || "");
+  const [selectedExpertise, setSelectedExpertise] = useState(
+    currentExpertise || '',
+  );
 
   const handleSubmit = () => {
     if (selectedExpertise) {
@@ -60,21 +74,29 @@ export default function ExpertiseModal({
         <CardHeader>
           <CardTitle className="text-gray-900">Select Your Expertise</CardTitle>
           <CardDescription className="text-gray-600">
-            Choose your area of expertise to help us provide better content and rewards.
+            Choose your area of expertise to help us provide better content and
+            rewards.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="expertise" className="text-gray-700">
-              What's your area of expertise?
+              What&apos;s your area of expertise?
             </Label>
-            <Select value={selectedExpertise} onValueChange={setSelectedExpertise} >
+            <Select
+              value={selectedExpertise}
+              onValueChange={setSelectedExpertise}
+            >
               <SelectTrigger className="w-full cursor-pointer bg-white border-gray-300 hover:bg-gray-50 text-black">
                 <SelectValue placeholder="Select your expertise" />
               </SelectTrigger>
               <SelectContent className="bg-white text-black max-h-52 overflow-y-auto">
                 {EXPERTISE_OPTIONS.map((expertise) => (
-                  <SelectItem key={expertise} value={expertise} className="text-black hover:bg-blue-500 hover:text-white cursor-pointer">
+                  <SelectItem
+                    key={expertise}
+                    value={expertise}
+                    className="text-black hover:bg-blue-500 hover:text-white cursor-pointer"
+                  >
                     {expertise}
                   </SelectItem>
                 ))}
