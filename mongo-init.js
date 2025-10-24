@@ -11,36 +11,45 @@ db.createCollection('users', {
         email: { bsonType: 'string' },
         name: { bsonType: 'string' },
         image: { bsonType: 'string' },
+        profile: {
+          bsonType: 'object',
+          properties: {
+            expertise: { bsonType: 'string' },
+            bio: { bsonType: 'string' },
+          },
+        },
         createdAt: { bsonType: 'date' },
-        updatedAt: { bsonType: 'date' }
-      }
-    }
-  }
+        updatedAt: { bsonType: 'date' },
+      },
+    },
+  },
 });
 
 db.createCollection('submissions', {
   validator: {
     $jsonSchema: {
       bsonType: 'object',
-      required: ['userId', 'artifactUrl', 'question', 'answer', 'status', 'createdAt'],
+      required: ['userId', 'question', 'answer', 'status', 'createdAt'],
       properties: {
         userId: { bsonType: 'objectId' },
         artifactUrl: { bsonType: 'string' },
         question: { bsonType: 'string' },
         answer: { bsonType: 'string' },
-        status: { 
+        englishQuestion: { bsonType: 'string' },
+        englishAnswer: { bsonType: 'string' },
+        status: {
           bsonType: 'string',
-          enum: ['PENDING', 'PROCESSING', 'ACCEPTED', 'REJECTED']
+          enum: ['PENDING', 'PROCESSING', 'ACCEPTED', 'REJECTED'],
         },
         pointsAwarded: { bsonType: 'int' },
         n8nWorkflowId: { bsonType: 'string' },
         n8nRunId: { bsonType: 'string' },
         reviewerNotes: { bsonType: 'string' },
         createdAt: { bsonType: 'date' },
-        updatedAt: { bsonType: 'date' }
-      }
-    }
-  }
+        updatedAt: { bsonType: 'date' },
+      },
+    },
+  },
 });
 
 db.createCollection('wallets', {
@@ -50,10 +59,10 @@ db.createCollection('wallets', {
       required: ['userId', 'pointsBalance'],
       properties: {
         userId: { bsonType: 'objectId' },
-        pointsBalance: { bsonType: 'int' }
-      }
-    }
-  }
+        pointsBalance: { bsonType: 'int' },
+      },
+    },
+  },
 });
 
 db.createCollection('bankdetails', {
@@ -67,10 +76,10 @@ db.createCollection('bankdetails', {
         accountNumber: { bsonType: 'string' },
         ifsc: { bsonType: 'string' },
         upiId: { bsonType: 'string' },
-        updatedAt: { bsonType: 'date' }
-      }
-    }
-  }
+        updatedAt: { bsonType: 'date' },
+      },
+    },
+  },
 });
 
 db.createCollection('redemptionrequests', {
@@ -81,20 +90,20 @@ db.createCollection('redemptionrequests', {
       properties: {
         userId: { bsonType: 'objectId' },
         points: { bsonType: 'int' },
-        status: { 
+        status: {
           bsonType: 'string',
-          enum: ['PENDING', 'APPROVED', 'REJECTED', 'PAID']
+          enum: ['PENDING', 'APPROVED', 'REJECTED', 'PAID'],
         },
-        method: { 
+        method: {
           bsonType: 'string',
-          enum: ['BANK', 'UPI']
+          enum: ['BANK', 'UPI'],
         },
         payoutRef: { bsonType: 'string' },
         createdAt: { bsonType: 'date' },
-        updatedAt: { bsonType: 'date' }
-      }
-    }
-  }
+        updatedAt: { bsonType: 'date' },
+      },
+    },
+  },
 });
 
 db.createCollection('webhookevents', {
@@ -107,10 +116,25 @@ db.createCollection('webhookevents', {
         payload: { bsonType: 'object' },
         source: { bsonType: 'string' },
         signature: { bsonType: 'string' },
-        createdAt: { bsonType: 'date' }
-      }
-    }
-  }
+        createdAt: { bsonType: 'date' },
+      },
+    },
+  },
+});
+
+db.createCollection('wallettransactions', {
+  validator: {
+    $jsonSchema: {
+      bsonType: 'object',
+      required: ['walletId', 'deltaPoints', 'reason', 'createdAt'],
+      properties: {
+        walletId: { bsonType: 'objectId' },
+        deltaPoints: { bsonType: 'int' },
+        reason: { bsonType: 'string' },
+        createdAt: { bsonType: 'date' },
+      },
+    },
+  },
 });
 
 // Create indexes for better performance
@@ -124,5 +148,7 @@ db.redemptionrequests.createIndex({ userId: 1 });
 db.redemptionrequests.createIndex({ status: 1 });
 db.webhookevents.createIndex({ submissionId: 1 });
 db.webhookevents.createIndex({ createdAt: -1 });
+db.wallettransactions.createIndex({ walletId: 1 });
+db.wallettransactions.createIndex({ createdAt: -1 });
 
 print('Database initialized successfully');

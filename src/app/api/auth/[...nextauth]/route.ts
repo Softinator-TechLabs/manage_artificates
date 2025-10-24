@@ -1,9 +1,9 @@
-import NextAuth from "next-auth";
-import Google from "next-auth/providers/google";
-import connectDB from "@/lib/mongodb";
-import User from "@/models/User";
+import NextAuth, { NextAuthOptions } from 'next-auth';
+import Google from 'next-auth/providers/google';
+import connectDB from '@/lib/mongodb';
+import User from '@/models/User';
 
-const handler = NextAuth({
+export const authOptions: NextAuthOptions = {
   providers: [
     Google({
       clientId: process.env.GOOGLE_CLIENT_ID!,
@@ -14,10 +14,10 @@ const handler = NextAuth({
     async signIn({ user, account, profile }) {
       try {
         await connectDB();
-        
+
         // Check if user exists by email
         let existingUser = await User.findOne({ email: user.email });
-        
+
         if (!existingUser) {
           // Create new user if doesn't exist
           existingUser = await User.create({
@@ -26,27 +26,27 @@ const handler = NextAuth({
             image: user.image,
           });
         }
-        
+
         return true;
       } catch (error) {
-        console.error("Error in signIn callback:", error);
+        console.error('Error in signIn callback:', error);
         return false;
       }
     },
     async session({ session, token }) {
       try {
         await connectDB();
-        
+
         if (session.user?.email) {
           const user = await User.findOne({ email: session.user.email });
           if (user) {
             (session.user as any).id = user._id.toString();
           }
         }
-        
+
         return session;
       } catch (error) {
-        console.error("Error in session callback:", error);
+        console.error('Error in session callback:', error);
         return session;
       }
     },
@@ -61,12 +61,14 @@ const handler = NextAuth({
     signIn: '/login',
   },
   session: {
-    strategy: 'jwt',
+    strategy: 'jwt' as const,
     maxAge: 365 * 24 * 60 * 60, // 365 days in seconds
   },
   jwt: {
     maxAge: 365 * 24 * 60 * 60, // 365 days in seconds
   },
-});
+};
+
+const handler = NextAuth(authOptions);
 
 export { handler as GET, handler as POST };

@@ -1,23 +1,30 @@
-"use client";
+'use client';
 
-import { useState, useRef } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Card, CardContent } from "@/components/ui/card";
+import { useState, useRef } from 'react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Card, CardContent } from '@/components/ui/card';
 
 interface ImageUploadProps {
-  onImageUploaded: (imageUrl: string) => void;
+  onImageUploaded: (imageData: string) => void; // Now expects base64 data
   currentImageUrl?: string;
 }
 
-export default function ImageUpload({ onImageUploaded, currentImageUrl }: ImageUploadProps) {
+export default function ImageUpload({
+  onImageUploaded,
+  currentImageUrl,
+}: ImageUploadProps) {
   const [isUploading, setIsUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(currentImageUrl || null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(
+    currentImageUrl || null,
+  );
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleFileSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileSelect = async (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
@@ -37,26 +44,24 @@ export default function ImageUpload({ onImageUploaded, currentImageUrl }: ImageU
     setUploadError(null);
 
     try {
-      const formData = new FormData();
-      formData.append('file', file);
-
-      const response = await fetch('/api/upload', {
-        method: 'POST',
-        body: formData,
-      });
-
-      const result = await response.json();
-
-      if (!response.ok) {
-        throw new Error(result.error || 'Upload failed');
-      }
-
-      setPreviewUrl(result.imageUrl);
-      onImageUploaded(result.imageUrl);
+      // Convert file to base64
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const base64Data = e.target?.result as string;
+        setPreviewUrl(base64Data);
+        onImageUploaded(base64Data);
+        setIsUploading(false);
+      };
+      reader.onerror = () => {
+        setUploadError('Failed to read file');
+        setIsUploading(false);
+      };
+      reader.readAsDataURL(file);
     } catch (error) {
-      console.error('Upload error:', error);
-      setUploadError(error instanceof Error ? error.message : 'Upload failed');
-    } finally {
+      console.error('File processing error:', error);
+      setUploadError(
+        error instanceof Error ? error.message : 'File processing failed',
+      );
       setIsUploading(false);
     }
   };
@@ -66,7 +71,7 @@ export default function ImageUpload({ onImageUploaded, currentImageUrl }: ImageU
     const file = event.dataTransfer.files[0];
     if (file) {
       const fakeEvent = {
-        target: { files: [file] }
+        target: { files: [file] },
       } as React.ChangeEvent<HTMLInputElement>;
       handleFileSelect(fakeEvent);
     }
@@ -79,8 +84,8 @@ export default function ImageUpload({ onImageUploaded, currentImageUrl }: ImageU
   return (
     <div className="space-y-4">
       <Label htmlFor="image-upload">Upload Image</Label>
-      
-      <Card 
+
+      <Card
         className="border-2 border-dashed border-gray-300 hover:border-gray-400 transition-colors cursor-pointer"
         onDrop={handleDrop}
         onDragOver={handleDragOver}
@@ -89,9 +94,9 @@ export default function ImageUpload({ onImageUploaded, currentImageUrl }: ImageU
         <CardContent className="p-6 text-center">
           {previewUrl ? (
             <div className="space-y-4">
-              <img 
-                src={previewUrl} 
-                alt="Preview" 
+              <img
+                src={previewUrl}
+                alt="Preview"
                 className="max-h-48 mx-auto rounded-lg object-cover"
               />
               <p className="text-sm text-gray-600">Click to change image</p>
@@ -100,8 +105,12 @@ export default function ImageUpload({ onImageUploaded, currentImageUrl }: ImageU
             <div className="space-y-4">
               <div className="text-4xl text-gray-400">📷</div>
               <div>
-                <p className="text-lg font-medium">Drop an image here or click to select</p>
-                <p className="text-sm text-gray-500">PNG, JPG, WebP up to 10MB</p>
+                <p className="text-lg font-medium">
+                  Drop an image here or click to select
+                </p>
+                <p className="text-sm text-gray-500">
+                  PNG, JPG, WebP up to 10MB
+                </p>
               </div>
             </div>
           )}
@@ -122,7 +131,7 @@ export default function ImageUpload({ onImageUploaded, currentImageUrl }: ImageU
         <div className="text-center">
           <div className="inline-flex items-center space-x-2">
             <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
-            <span className="text-sm text-gray-600">Uploading to Google Drive...</span>
+            <span className="text-sm text-gray-600">Processing image...</span>
           </div>
         </div>
       )}
@@ -135,7 +144,7 @@ export default function ImageUpload({ onImageUploaded, currentImageUrl }: ImageU
 
       {previewUrl && (
         <div className="text-green-600 text-sm bg-green-50 p-3 rounded-md">
-          ✅ Image uploaded successfully to Google Drive
+          ✅ Image ready for submission
         </div>
       )}
     </div>
