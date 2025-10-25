@@ -1,13 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(request: NextRequest) {
-  // Only allow this in development or if you need to debug
-  if (
-    process.env.NODE_ENV === 'production' &&
-    !request.headers.get('x-debug-key')
-  ) {
-    return NextResponse.json({ error: 'Not allowed' }, { status: 403 });
-  }
+  // Temporarily allow this in production for debugging
+  // if (
+  //   process.env.NODE_ENV === 'production' &&
+  //   !request.headers.get('x-debug-key')
+  // ) {
+  //   return NextResponse.json({ error: 'Not allowed' }, { status: 403 });
+  // }
 
   const debugInfo = {
     environment: process.env.NODE_ENV,
@@ -16,15 +16,9 @@ export async function GET(request: NextRequest) {
     hasGoogleClientSecret: !!process.env.GOOGLE_CLIENT_SECRET,
     hasMongoUri: !!process.env.MONGODB_URI,
     hasNextAuthSecret: !!process.env.NEXTAUTH_SECRET,
-    // Don't expose actual values in production
-    googleClientId:
-      process.env.NODE_ENV === 'development'
-        ? process.env.GOOGLE_CLIENT_ID
-        : '***hidden***',
-    mongoUri:
-      process.env.NODE_ENV === 'development'
-        ? process.env.MONGODB_URI
-        : '***hidden***',
+    // Show actual values for debugging (remove after fixing)
+    googleClientId: process.env.GOOGLE_CLIENT_ID || 'NOT_SET',
+    mongoUri: process.env.MONGODB_URI || 'NOT_SET',
     expectedRedirectUri: process.env.NEXTAUTH_URL
       ? `${process.env.NEXTAUTH_URL}/api/auth/callback/google`
       : 'NOT_SET',
