@@ -8,6 +8,13 @@ export const authOptions: NextAuthOptions = {
     Google({
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+      authorization: {
+        params: {
+          prompt: 'consent',
+          access_type: 'offline',
+          response_type: 'code',
+        },
+      },
     }),
   ],
   callbacks: {
@@ -30,7 +37,8 @@ export const authOptions: NextAuthOptions = {
         return true;
       } catch (error) {
         console.error('Error in signIn callback:', error);
-        return false;
+        // Don't fail authentication if database is down, just log the error
+        return true;
       }
     },
     async session({ session }) {
@@ -47,6 +55,7 @@ export const authOptions: NextAuthOptions = {
         return session;
       } catch (error) {
         console.error('Error in session callback:', error);
+        // Return session even if database is down
         return session;
       }
     },
@@ -55,6 +64,13 @@ export const authOptions: NextAuthOptions = {
         token.id = user.id;
       }
       return token;
+    },
+    async redirect({ url, baseUrl }) {
+      // Allows relative callback URLs
+      if (url.startsWith('/')) return `${baseUrl}${url}`;
+      // Allows callback URLs on the same origin
+      else if (new URL(url).origin === baseUrl) return url;
+      return baseUrl;
     },
   },
   pages: {
@@ -67,6 +83,8 @@ export const authOptions: NextAuthOptions = {
   jwt: {
     maxAge: 365 * 24 * 60 * 60, // 365 days in seconds
   },
+  // Add debug logging for production
+  debug: process.env.NODE_ENV === 'development',
 };
 
 const handler = NextAuth(authOptions);
