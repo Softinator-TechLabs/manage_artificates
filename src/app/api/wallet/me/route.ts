@@ -4,10 +4,11 @@ import connectDB from "@/lib/mongodb";
 import User from "@/models/User";
 import Wallet from "@/models/Wallet";
 import WalletTransaction from "@/models/WalletTransaction";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
 export async function GET() {
   try {
-    const session = await getServerSession();
+    const session = await getServerSession(authOptions);
     if (!session?.user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
