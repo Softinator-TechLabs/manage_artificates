@@ -6,7 +6,7 @@ import User from "@/models/User";
 import Wallet from "@/models/Wallet";
 import WalletTransaction from "@/models/WalletTransaction";
 import RedemptionRequest from "@/models/RedemptionRequest";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { authOptions } from "@/lib/auth";
 
 export async function POST(req: NextRequest) {
   try {

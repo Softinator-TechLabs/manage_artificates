@@ -4,7 +4,7 @@ import connectDB from "@/lib/mongodb";
 import User from "@/models/User";
 import Wallet from "@/models/Wallet";
 import WalletTransaction from "@/models/WalletTransaction";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { authOptions } from "@/lib/auth";
 
 export async function GET() {
   try {

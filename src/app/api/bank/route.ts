@@ -5,7 +5,7 @@ import connectDB from '@/lib/mongodb';
 import User from '@/models/User';
 import BankDetails from '@/models/BankDetails';
 import { encryptPII, maskAccount } from '@/lib/encryption';
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { authOptions } from '@/lib/auth';
 
 export async function GET() {
   try {

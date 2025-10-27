@@ -5,7 +5,7 @@ import connectDB from '@/lib/mongodb';
 import User from '@/models/User';
 import Submission from '@/models/Submission';
 import Wallet from '@/models/Wallet';
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { authOptions } from '@/lib/auth';
 
 export async function POST(req: NextRequest) {
   try {
