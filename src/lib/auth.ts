@@ -4,6 +4,7 @@ import connectDB from '@/lib/mongodb';
 import User from '@/models/User';
 
 export const authOptions: NextAuthOptions = {
+  secret: process.env.NEXTAUTH_SECRET,
   providers: [
     Google({
       clientId: process.env.GOOGLE_CLIENT_ID!,
@@ -83,6 +84,7 @@ export const authOptions: NextAuthOptions = {
   jwt: {
     maxAge: 365 * 24 * 60 * 60, // 365 days in seconds
   },
+  useSecureCookies: process.env.NODE_ENV === 'production',
   // Add debug logging for production
   debug: process.env.NODE_ENV === 'development',
 };

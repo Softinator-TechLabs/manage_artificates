@@ -74,11 +74,11 @@ export async function POST(req: NextRequest) {
     // Send to N8N to start workflow (fire and forget)
     if (process.env.N8N_CHECK_ARTIFACTE) {
       // Fire and forget - N8N will call us back later
+      console.log('Sending to N8N:', process.env.N8N_CHECK_ARTIFACTE);
       fetch(process.env.N8N_CHECK_ARTIFACTE, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'x-api-key': process.env.N8N_API_KEY || '',
         },
         body: JSON.stringify({
           submissionId: submission._id.toString(),
